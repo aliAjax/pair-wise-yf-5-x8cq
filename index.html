@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>创客空间 · 激光切割预约</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>创客空间 · 激光切割预约</h1>
+    <div class="header-right">
+      <span class="dim">开放时段 09:00–21:00 · 数据保存在本机浏览器</span>
+      <button id="reset" class="ghost">重置数据</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="machines" class="machine-grid"></section>
+
+    <div class="layout">
+      <section class="card">
+        <h2>新建预约</h2>
+        <form id="booking-form">
+          <label>成员
+            <select id="f-member"></select>
+          </label>
+          <label>机器
+            <select id="f-machine"></select>
+          </label>
+          <label>材料
+            <select id="f-material"></select>
+          </label>
+          <label>厚度
+            <select id="f-thickness"></select>
+            <small id="thickness-hint" class="dim"></small>
+          </label>
+          <div class="row">
+            <label>宽 (mm)
+              <input id="f-w" type="number" min="10" max="2000" value="200" required>
+            </label>
+            <label>高 (mm)
+              <input id="f-h" type="number" min="10" max="2000" value="150" required>
+            </label>
+          </div>
+          <label>日期
+            <input id="f-date" type="date" required>
+          </label>
+          <div class="row">
+            <label>开始
+              <input id="f-start" type="time" required>
+            </label>
+            <label>结束
+              <input id="f-end" type="time" required>
+            </label>
+          </div>
+          <label>用途
+            <input id="f-purpose" type="text" maxlength="60" placeholder="例如：课程作业外壳">
+          </label>
+          <button type="submit" class="primary">提交预约</button>
+          <div id="msg" class="msg" hidden></div>
+        </form>
+      </section>
+
+      <div class="side">
+        <section class="card">
+          <h2>成员本周时长</h2>
+          <div id="members"></div>
+        </section>
+
+        <section class="card">
+          <h2>材料库存 <small class="dim">（先耗余料，不够才开整板；≥100mm 边角自动回记）</small></h2>
+          <table id="inventory">
+            <thead><tr><th>材料</th><th>整板 600×400</th><th>余料</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </section>
+      </div>
+    </div>
+
+    <section class="card">
+      <h2>预约与候补</h2>
+      <table id="bookings">
+        <thead>
+          <tr><th>状态</th><th>机器</th><th>成员</th><th>材料 · 尺寸</th><th>时段</th><th>用途</th><th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+
+  <script src="js/inventory.js"></script>
+  <script src="js/scheduler.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
