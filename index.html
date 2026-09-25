@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>创客空间 · 激光切割预约</title>
+<style>
+  :root {
+    --bg: #14171c;
+    --panel: #1d2229;
+    --panel-2: #232933;
+    --line: #323a46;
+    --text: #e8ecf1;
+    --muted: #93a0b0;
+    --accent: #ff7847;
+    --ok: #4cc38a;
+    --warn: #f5b942;
+    --bad: #e5534b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--line);
+    background: var(--panel);
+    position: sticky; top: 0; z-index: 10;
+  }
+  header h1 { font-size: 18px; margin: 0; }
+  header h1 .dot { color: var(--accent); }
+  main {
+    max-width: 1180px; margin: 0 auto; padding: 20px 24px 60px;
+    display: grid; gap: 20px;
+    grid-template-columns: 1fr 1fr;
+  }
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+  .panel h2 { margin: 0 0 12px; font-size: 15px; color: var(--muted); font-weight: 600; }
+  .span2 { grid-column: span 2; }
+  .cards { display: grid; gap: 10px; }
+  .card {
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .card .name { font-weight: 600; }
+  .card .sub { color: var(--muted); font-size: 13px; margin-top: 4px; line-height: 1.6; }
+  .tag {
+    display: inline-block; font-size: 12px; padding: 1px 8px; margin: 2px 4px 2px 0;
+    border-radius: 999px; background: #2c3440; color: var(--muted);
+  }
+  .tag.hot { color: var(--accent); }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; white-space: nowrap; }
+  .badge { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+  .b-confirmed { background: rgba(76,195,138,.15); color: var(--ok); }
+  .b-waitlist  { background: rgba(245,185,66,.15); color: var(--warn); }
+  .b-completed { background: rgba(147,160,176,.15); color: var(--muted); }
+  .b-cancelled { background: rgba(229,83,75,.15); color: var(--bad); }
+  form { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 4px; }
+  input, select, textarea, button {
+    font: inherit; color: var(--text);
+    background: var(--panel-2);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 8px 10px;
+    width: 100%;
+  }
+  input:focus, select:focus, textarea:focus { outline: none; border-color: var(--accent); }
+  .field-wide { grid-column: span 2; }
+  .form-actions { grid-column: span 4; display: flex; align-items: center; gap: 12px; }
+  button {
+    width: auto; cursor: pointer; border: none;
+    background: var(--accent); color: #1a120c; font-weight: 600;
+    padding: 9px 22px;
+  }
+  button.ghost { background: transparent; color: var(--muted); border: 1px solid var(--line); }
+  button.small { padding: 3px 10px; font-size: 12px; font-weight: 400; }
+  button.small.complete { background: transparent; color: var(--ok); border: 1px solid var(--ok); }
+  button.small.cancel { background: transparent; color: var(--bad); border: 1px solid var(--bad); }
+  #msg { margin-bottom: 12px; display: none; border-radius: 8px; padding: 10px 14px; font-size: 13px; line-height: 1.7; }
+  #msg.error { display: block; background: rgba(229,83,75,.12); border: 1px solid var(--bad); }
+  #msg.ok { display: block; background: rgba(76,195,138,.12); border: 1px solid var(--ok); }
+  #msg.warn { display: block; background: rgba(245,185,66,.12); border: 1px solid var(--warn); }
+  #msg ul { margin: 0; padding-left: 18px; }
+  .remnants { color: var(--muted); font-size: 12px; }
+  .quota-bar { height: 6px; border-radius: 3px; background: #2c3440; margin-top: 6px; overflow: hidden; }
+  .quota-bar i { display: block; height: 100%; background: var(--ok); }
+  .quota-bar i.full { background: var(--warn); }
+  .empty { color: var(--muted); font-size: 13px; padding: 8px 0; }
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    .span2 { grid-column: span 1; }
+    form { grid-template-columns: 1fr 1fr; }
+    .form-actions { grid-column: span 2; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1><span class="dot">⚡</span> 创客空间 · 激光切割预约</h1>
+  <button class="ghost" id="reset">重置演示数据</button>
+</header>
+<main>
+  <section class="panel">
+    <h2>设备（3 台）</h2>
+    <div class="cards" id="machines"></div>
+  </section>
+
+  <section class="panel">
+    <h2>成员每周时长 <span id="member-week" class="remnants"></span></h2>
+    <div class="cards" id="members"></div>
+  </section>
+
+  <section class="panel span2">
+    <h2>板材库存（余料优先消耗，切割整板的可用边角自动回记）</h2>
+    <div id="inventory"></div>
+  </section>
+
+  <section class="panel span2">
+    <h2>新建预约</h2>
+    <div id="msg"></div>
+    <form id="booking-form">
+      <div>
+        <label>成员</label>
+        <select id="f-member" required></select>
+      </div>
+      <div>
+        <label>机器</label>
+        <select id="f-machine" required></select>
+      </div>
+      <div>
+        <label>材料</label>
+        <select id="f-material" required></select>
+      </div>
+      <div>
+        <label>厚度 (mm)</label>
+        <select id="f-thickness" required></select>
+      </div>
+      <div>
+        <label>尺寸 宽 (mm)</label>
+        <input id="f-width" type="number" min="1" step="1" placeholder="如 400" required>
+      </div>
+      <div>
+        <label>尺寸 高 (mm)</label>
+        <input id="f-height" type="number" min="1" step="1" placeholder="如 300" required>
+      </div>
+      <div>
+        <label>开始时间</label>
+        <input id="f-start" type="datetime-local" required>
+      </div>
+      <div>
+        <label>结束时间</label>
+        <input id="f-end" type="datetime-local" required>
+      </div>
+      <div class="field-wide">
+        <label>用途</label>
+        <input id="f-purpose" type="text" placeholder="如：课程作业外壳打样" required>
+      </div>
+      <div class="form-actions">
+        <button type="submit">提交预约</button>
+        <span class="remnants">同机时段重叠会被挡下；每周时长用完后自动进入候补队列</span>
+      </div>
+    </form>
+  </section>
+
+  <section class="panel span2">
+    <h2>预约记录</h2>
+    <div id="bookings"></div>
+  </section>
+</main>
+
+<script src="inventory.js"></script>
+<script src="scheduler.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
